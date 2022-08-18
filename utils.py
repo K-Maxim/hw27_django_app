@@ -1,13 +1,22 @@
 import csv
 import json
 
-ads_scv = r'./datasets/ads.csv'
-categories_scv = r'./datasets/categories.csv'
+ads_scv = r'./datasets/ad.csv'
+ads_json = r'./ads/fixtures/ads.json'
 ads_model = 'ads.ad'
 
-ads_json = r'./ads/fixtures/ads.json'
+categories_scv = r'./datasets/category.csv'
 categories_json = r'./ads/fixtures/categories.json'
 categories_model = 'ads.category'
+
+location_scv = r'./datasets/location.csv'
+location_json = r'./users/fixtures/location.json'
+location_model = 'users.location'
+
+user_scv = r'./datasets/user.csv'
+user_json = r'./users/fixtures/user.json'
+user_model = 'users.user'
+
 
 
 def csv_to_json(csv_file, json_file, model):
@@ -38,6 +47,6 @@ def replace_value(values):
 
 csv_to_json(ads_scv, ads_json, ads_model)
 csv_to_json(categories_scv, categories_json, categories_model)
-
-
+csv_to_json(location_scv, location_json, location_model)
+csv_to_json(user_scv, user_json, user_model)
 
