@@ -14,7 +14,7 @@ location_json = r'./users/fixtures/location.json'
 location_model = 'users.location'
 
 user_scv = r'./datasets/user.csv'
-user_json = r'./users/fixtures/user.json'
+user_json = r'./users/fixtures/users.json'
 user_model = 'users.user'
 
 
