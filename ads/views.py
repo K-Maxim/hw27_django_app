@@ -155,3 +155,35 @@ class CatDetailView(DetailView):
             "id": cat.pk,
             "name": cat.name,
         }, safe=False)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class CatUpdateView(UpdateView):
+    model = Category
+    fields = ["name"]
+
+    def patch(self, request, *args, **kwargs):
+        super().post(request, *args, **kwargs)
+
+        category_data = json.loads(request.body)
+        self.object.name = category_data["name"]
+
+        self.object.save()
+        return JsonResponse({
+            "id": self.object.id,
+            "name": self.object.name
+        })
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class CarDeleteView(DeleteView):
+    model = Category
+
+    success_url = '/'
+
+    def delete(self, request, *args, **kwargs):
+        super().delete(request, *args, **kwargs)
+
+        return JsonResponse({
+            "status": "ok"
+        }, status=200)
