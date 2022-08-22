@@ -20,6 +20,7 @@ from ads import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.source_page),
-    path('', include('ads.urls'))
+    path('', include('ads.urls')),
+    path("user/", include('users.urls'))
 ]
 
