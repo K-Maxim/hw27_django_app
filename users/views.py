@@ -17,7 +17,7 @@ class UserView(ListView):
 
     def get(self, request, *args, **kwargs):
         super().get(request, *args, **kwargs)
-        self.object_list = self.object_list.annotate(total_ads=Count('ad'))
+        self.object_list = self.object_list.filter(ad__is_published=True).annotate(total_ads=Count('ad'))
 
         paginator = Paginator(self.object_list, settings.TOTAL_ON_PAGE)
         page_number = request.GET.get('page')
