@@ -90,7 +90,7 @@ class UserCreateView(CreateView):
             "last_name": user.last_name,
             "role": user.role,
             "age": user.age,
-            "locations": list(map(str, user.locations.all())),
+            "locations": list(map(str, user.location_id.all())),
         })
 
 
