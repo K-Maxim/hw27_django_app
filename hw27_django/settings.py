@@ -135,3 +135,9 @@ MEDIA_URL = "/images/"   # для картинок
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # для картинок
 
 TOTAL_ON_PAGE = 10
+
+# для пагинации
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,  # количество вакансий на странице
+}
