@@ -6,6 +6,9 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, UpdateView, DeleteView, CreateView, ListView
 from django.shortcuts import render, get_object_or_404
+from rest_framework.generics import ListAPIView, RetrieveAPIView
+
+from ads.serializer import AdSerializer
 from hw27_django import settings
 
 from ads.models import Ad, Category
@@ -16,56 +19,70 @@ def source_page(request):
     return JsonResponse({"status": "ok"})
 
 
-class AdView(ListView):
-    models = Ad
+class AdView(ListAPIView):
     queryset = Ad.objects.all()
+    serializer_class = AdSerializer
 
     def get(self, request, *args, **kwargs):
-        super().get(request, *args, **kwargs)
+        category = request.GET.getlist('cat', [])
+        if category:
+            self.queryset = self.queryset.filter(category_id__in=category)
+        return super().get(request, *args, **kwargs)
+    # models = Ad
+    # queryset = Ad.objects.all()
+    #
+    # def get(self, request, *args, **kwargs):
+    #     super().get(request, *args, **kwargs)
+    #
+    #     category = request.GET.getlist('cat', [])
+    #     if category:
+    #         self.queryset = self.queryset.filter(category_id__in=category)
+    #
+    #     self.object_list = self.object_list.select_related('author_id').order_by("-price")
+    #     paginator = Paginator(self.object_list, settings.TOTAL_ON_PAGE)
+    #     page_number = request.GET.get('page')
+    #     page_obj = paginator.get_page(page_number)
+    #
+    #     ads = []
+    #     for ad in page_obj:
+    #         ads.append({
+    #             "id": ad.id,
+    #             "name": ad.name,
+    #             "author_id": ad.author_id.first_name,
+    #             "price": ad.price,
+    #             "description": ad.description,
+    #             "is_published": ad.is_published,
+    #             "category_id": ad.category_id.name,
+    #             "image": ad.image.url if ad.image else None,
+    #         })
+    #
+    #     response = {
+    #         "items": ads,
+    #         "num_pages": page_obj.paginator.num_pages,
+    #         "total": page_obj.paginator.count,
+    #     }
+    #
+    #     return JsonResponse(response, safe=False)
 
-        self.object_list = self.object_list.select_related('author_id').order_by("-price")
-        paginator = Paginator(self.object_list, settings.TOTAL_ON_PAGE)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
 
-        ads = []
-        for ad in page_obj:
-            ads.append({
-                "id": ad.id,
-                "name": ad.name,
-                "author_id": ad.author_id.first_name,
-                "price": ad.price,
-                "description": ad.description,
-                "is_published": ad.is_published,
-                "category_id": ad.category_id.name,
-                "image": ad.image.url if ad.image else None,
-            })
-
-        response = {
-            "items": ads,
-            "num_pages": page_obj.paginator.num_pages,
-            "total": page_obj.paginator.count,
-        }
-
-        return JsonResponse(response, safe=False)
-
-
-class AdDetailView(DetailView):
-    model = Ad
-
-    def get(self, request, *args, **kwargs):
-        ad = self.get_object()
-
-        return JsonResponse({
-            "id": ad.id,
-            "name": ad.name,
-            "author_id": ad.author_id.first_name,
-            "price": ad.price,
-            "description": ad.description,
-            "is_published": ad.is_published,
-            "category_id": ad.category_id.name,
-            "image": ad.image.url if ad.image else None,
-        }, safe=False)
+class AdDetailView(RetrieveAPIView):
+    queryset = Ad.objects.all()
+    serializer_class = AdSerializer
+    # model = Ad
+    #
+    # def get(self, request, *args, **kwargs):
+    #     ad = self.get_object()
+    #
+    #     return JsonResponse({
+    #         "id": ad.id,
+    #         "name": ad.name,
+    #         "author_id": ad.author_id.first_name,
+    #         "price": ad.price,
+    #         "description": ad.description,
+    #         "is_published": ad.is_published,
+    #         "category_id": ad.category_id.name,
+    #         "image": ad.image.url if ad.image else None,
+    #     }, safe=False)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
