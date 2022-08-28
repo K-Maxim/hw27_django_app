@@ -27,62 +27,29 @@ class AdView(ListAPIView):
         category = request.GET.getlist('cat', [])
         if category:
             self.queryset = self.queryset.filter(category_id__in=category)
+
+        text = request.GET.get('text', None)
+        if text:
+            self.queryset = self.queryset.filter(name__icontains=text)
+
+        location = request.GET.get('location', None)
+        if location:
+            self.queryset = self.queryset.filter(author_id__location_id__name__icontains=location)
+
+        price_from = request.GET.get('price_from', None)
+        if price_from:
+            self.queryset = self.queryset.filter(price__gte=int(price_from))
+
+        price_to = request.GET.get('price_to', None)
+        if price_to:
+            self.queryset = self.queryset.filter(price__lte=int(price_to))
+
         return super().get(request, *args, **kwargs)
-    # models = Ad
-    # queryset = Ad.objects.all()
-    #
-    # def get(self, request, *args, **kwargs):
-    #     super().get(request, *args, **kwargs)
-    #
-    #     category = request.GET.getlist('cat', [])
-    #     if category:
-    #         self.queryset = self.queryset.filter(category_id__in=category)
-    #
-    #     self.object_list = self.object_list.select_related('author_id').order_by("-price")
-    #     paginator = Paginator(self.object_list, settings.TOTAL_ON_PAGE)
-    #     page_number = request.GET.get('page')
-    #     page_obj = paginator.get_page(page_number)
-    #
-    #     ads = []
-    #     for ad in page_obj:
-    #         ads.append({
-    #             "id": ad.id,
-    #             "name": ad.name,
-    #             "author_id": ad.author_id.first_name,
-    #             "price": ad.price,
-    #             "description": ad.description,
-    #             "is_published": ad.is_published,
-    #             "category_id": ad.category_id.name,
-    #             "image": ad.image.url if ad.image else None,
-    #         })
-    #
-    #     response = {
-    #         "items": ads,
-    #         "num_pages": page_obj.paginator.num_pages,
-    #         "total": page_obj.paginator.count,
-    #     }
-    #
-    #     return JsonResponse(response, safe=False)
 
 
 class AdDetailView(RetrieveAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdSerializer
-    # model = Ad
-    #
-    # def get(self, request, *args, **kwargs):
-    #     ad = self.get_object()
-    #
-    #     return JsonResponse({
-    #         "id": ad.id,
-    #         "name": ad.name,
-    #         "author_id": ad.author_id.first_name,
-    #         "price": ad.price,
-    #         "description": ad.description,
-    #         "is_published": ad.is_published,
-    #         "category_id": ad.category_id.name,
-    #         "image": ad.image.url if ad.image else None,
-    #     }, safe=False)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
