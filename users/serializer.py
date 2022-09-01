@@ -34,11 +34,13 @@ class UserCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create(**validated_data)
 
+        user.set_password(validated_data['password'])
+        user.save()
+
         for loc in self._location:
             loc_object, _ = Location.objects.get_or_create(name=loc)
             user.location_id.add(loc_object)
 
-        user.save()
         return user
 
 
