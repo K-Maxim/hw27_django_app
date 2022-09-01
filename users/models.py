@@ -29,11 +29,11 @@ class User(AbstractUser):
 
     first_name = models.CharField(max_length=50, null=True)
     last_name = models.CharField(max_length=50, null=True)
-    username = models.CharField(max_length=50, unique=True)
-    password = models.CharField(max_length=50)
+    # username = models.CharField(max_length=50, unique=True)
+    # password = models.CharField(max_length=50)
     role = models.CharField(max_length=20, choices=ROLES, default=MEMBER)
-    age = models.IntegerField()
-    location_id = models.ManyToManyField(Location)
+    age = models.IntegerField(null=True)
+    location_id = models.ManyToManyField(Location, null=True)
 
     class Meta:
         verbose_name = 'Пользователь'
