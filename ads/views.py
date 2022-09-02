@@ -6,6 +6,7 @@ from django.views.generic import UpdateView
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 
+from ads.permissions import SelectionUpdateDeletePermission, AdUpdateDeletePermission
 from ads.serializer import AdSerializer, AdCreateSerializer, AdUpdateSerializer, AdDeleteSerializer, CatListSerializer, \
     CatCreateSerializer, CatUpdateSerializer, CatDeleteSerializer, SelectionListSerializer, SelectionDetailSerializer, \
     SelectionCreateUpdateDeleteSerializer
@@ -59,11 +60,13 @@ class AdCreateView(CreateAPIView):
 class AdUpdateView(UpdateAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdUpdateSerializer
+    permission_classes = [IsAuthenticated, AdUpdateDeletePermission]
 
 
 class AdDeleteView(DestroyAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdDeleteSerializer
+    permission_classes = [IsAuthenticated, AdUpdateDeletePermission]
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -128,13 +131,16 @@ class SelectionDetailView(RetrieveAPIView):
 class SelectionCreateView(CreateAPIView):
     queryset = Selection.objects.all()
     serializer_class = SelectionCreateUpdateDeleteSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class SelectionUpdateView(UpdateAPIView):
     queryset = Selection.objects.all()
     serializer_class = SelectionCreateUpdateDeleteSerializer
+    permission_classes = [IsAuthenticated, SelectionUpdateDeletePermission]
 
 
 class SelectionDeleteView(DestroyAPIView):
     queryset = Selection.objects.all()
     serializer_class = SelectionCreateUpdateDeleteSerializer
+    permission_classes = [IsAuthenticated, SelectionUpdateDeletePermission]
