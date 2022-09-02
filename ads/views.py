@@ -7,9 +7,10 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView,
 from rest_framework.permissions import IsAuthenticated
 
 from ads.serializer import AdSerializer, AdCreateSerializer, AdUpdateSerializer, AdDeleteSerializer, CatListSerializer, \
-    CatCreateSerializer, CatUpdateSerializer, CatDeleteSerializer
+    CatCreateSerializer, CatUpdateSerializer, CatDeleteSerializer, SelectionListSerializer, SelectionDetailSerializer, \
+    SelectionCreateUpdateDeleteSerializer
 
-from ads.models import Ad, Category
+from ads.models import Ad, Category, Selection
 
 
 def source_page(request):
@@ -112,3 +113,28 @@ class CatUpdateView(UpdateAPIView):
 class CarDeleteView(DestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CatDeleteSerializer
+
+
+class SelectionListView(ListAPIView):
+    queryset = Selection.objects.all()
+    serializer_class = SelectionListSerializer
+
+
+class SelectionDetailView(RetrieveAPIView):
+    queryset = Selection.objects.all()
+    serializer_class = SelectionDetailSerializer
+
+
+class SelectionCreateView(CreateAPIView):
+    queryset = Selection.objects.all()
+    serializer_class = SelectionCreateUpdateDeleteSerializer
+
+
+class SelectionUpdateView(UpdateAPIView):
+    queryset = Selection.objects.all()
+    serializer_class = SelectionCreateUpdateDeleteSerializer
+
+
+class SelectionDeleteView(DestroyAPIView):
+    queryset = Selection.objects.all()
+    serializer_class = SelectionCreateUpdateDeleteSerializer
