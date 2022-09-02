@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 
-from ads.models import Ad, Category
+from ads.models import Ad, Category, Selection
 from users.models import User
 
 
@@ -133,3 +133,23 @@ class CatDeleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id']
+
+
+class SelectionListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Selection
+        fields = ['id', 'name']
+
+
+class SelectionDetailSerializer(serializers.ModelSerializer):
+    items = AdSerializer(many=True)
+
+    class Meta:
+        model = Selection
+        fields = '__all__'
+
+
+class SelectionCreateUpdateDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Selection
+        fields = '__all__'
