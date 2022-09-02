@@ -1,18 +1,14 @@
-import json
-from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
-from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import DetailView, UpdateView, DeleteView, CreateView, ListView
-from django.shortcuts import render, get_object_or_404
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from django.views.generic import UpdateView
 
-from ads.serializer import AdSerializer
-from hw27_django import settings
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
+
+from ads.serializer import AdSerializer, AdCreateSerializer, AdUpdateSerializer, AdDeleteSerializer, CatListSerializer, \
+    CatCreateSerializer, CatUpdateSerializer, CatDeleteSerializer
 
 from ads.models import Ad, Category
-from users.models import User
 
 
 def source_page(request):
@@ -52,80 +48,19 @@ class AdDetailView(RetrieveAPIView):
     serializer_class = AdSerializer
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class AdCreateView(CreateView):
-    model = Ad
-    fields = ["name", "author", "price", "description", "is_published", "category"]
-
-    def post(self, request, *args, **kwargs):
-        ad_data = json.loads(request.body)
-
-        author = get_object_or_404(User, ad_data["author_id"])
-        category = get_object_or_404(Category, ad_data["category_id"])
-
-        ad = Ad.objects.create(
-            name=ad_data["name"],
-            author=author,
-            price=ad_data["price"],
-            description=ad_data["description"],
-            is_published=ad_data["is_published"],
-            category=category,
-        )
-
-        return JsonResponse({
-            "id": ad.id,
-            "name": ad.name,
-            "author_id": ad.author_id,
-            "author": ad.author.first_name,
-            "price": ad.price,
-            "description": ad.description,
-            "is_published": ad.is_published,
-            "category_id": ad.category_id.name,
-            "image": ad.image.url if ad.image else None,
-        })
+class AdCreateView(CreateAPIView):
+    queryset = Ad.objects.all()
+    serializer_class = AdCreateSerializer
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class AdUpdateView(UpdateView):
-    model = Ad
-
-    fields = ['name', 'author', 'price', 'description', 'category_id']
-
-    def patch(self, request, *args, **kwargs):
-        super().post(request, *args, **kwargs)
-
-        ad_data = json.loads(request.body)
-
-        self.object.name = ad_data["name"]
-        self.object.price = ad_data["price"]
-        self.object.description = ad_data["description"]
-
-        self.object.save()
-
-        return JsonResponse({
-            "id": self.object.pk,
-            "name": self.object.name,
-            "author": self.object.author,
-            "price": self.object.price,
-            "description": self.object.description,
-            "is_published": self.object.is_published,
-            "image": self.object.image.url,
-            "category": self.object.category_id.name,
-        }, safe=False)
+class AdUpdateView(UpdateAPIView):
+    queryset = Ad.objects.all()
+    serializer_class = AdUpdateSerializer
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class AdDeleteView(DeleteView):
-    model = Ad
-
-    success_url = '/'
-
-    def delete(self, request, *args, **kwargs):
-        super().delete(request, *args, **kwargs)
-
-        return JsonResponse({
-            "status": "ok"
-        }, status=200)
+class AdDeleteView(DestroyAPIView):
+    queryset = Ad.objects.all()
+    serializer_class = AdDeleteSerializer
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -152,72 +87,26 @@ class AdUploadImageView(UpdateView):
         })
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class CatView(View):
-    def get(self, request):
-        categories = Category.objects.all()
-        response = []
-
-        for category in categories:
-            response.append({
-                "id": category.pk,
-                "name": category.name,
-            })
-
-        return JsonResponse(response, safe=False)
-
-    def post(self, request):
-        cat_data = json.loads(request.body)
-        cat = Category()
-
-        cat.name = cat_data["name"]
-
-        cat.save()
-
-        return JsonResponse({
-            "id": cat.id,
-            "name": cat.name
-        })
+class CatView(ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CatListSerializer
 
 
-class CatDetailView(DetailView):
-    model = Category
-
-    def get(self, request, *args, **kwargs):
-        cat = self.get_object()
-        return JsonResponse({
-            "id": cat.pk,
-            "name": cat.name,
-        }, safe=False)
+class CatCreateView(CreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CatCreateSerializer
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class CatUpdateView(UpdateView):
-    model = Category
-    fields = ["name"]
-
-    def patch(self, request, *args, **kwargs):
-        super().post(request, *args, **kwargs)
-
-        category_data = json.loads(request.body)
-        self.object.name = category_data["name"]
-
-        self.object.save()
-        return JsonResponse({
-            "id": self.object.id,
-            "name": self.object.name
-        })
+class CatDetailView(RetrieveAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CatListSerializer
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class CarDeleteView(DeleteView):
-    model = Category
+class CatUpdateView(UpdateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CatUpdateSerializer
 
-    success_url = '/'
 
-    def delete(self, request, *args, **kwargs):
-        super().delete(request, *args, **kwargs)
-
-        return JsonResponse({
-            "status": "ok"
-        }, status=200)
+class CarDeleteView(DestroyAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CatDeleteSerializer
