@@ -1,7 +1,20 @@
+from datetime import date, timedelta
+
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.db import models
 
 # Create your models here.
+
+
+MIN_AGE = 9
+
+
+def age_verification(born: date):
+    quantity_month = date.today().year * 12 + date.today().month - born.year * 12 + born.month
+    quantity_years = quantity_month / 12
+    if quantity_years < 9:
+        raise ValidationError("Access denied")
 
 
 class Location(models.Model):
@@ -34,6 +47,8 @@ class User(AbstractUser):
     role = models.CharField(max_length=20, choices=ROLES, default=MEMBER)
     age = models.IntegerField(null=True)
     location_id = models.ManyToManyField(Location, null=True)
+
+    birth_date = models.DateField(validators=[age_verification], null=True)
 
     class Meta:
         verbose_name = 'Пользователь'
