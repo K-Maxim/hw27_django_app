@@ -1,31 +1,6 @@
-from datetime import date
-
 from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError
 from django.db import models
-
-# Create your models here.
-
-
-MIN_AGE = 9
-
-
-def age_verification(value: date):
-    quantity_month = date.today().year * 12 + date.today().month - value.year * 12 + value.month
-    quantity_years = quantity_month / 12
-    if quantity_years < 9:
-        raise ValidationError(
-            "Access denied",
-            params={'value': value}
-        )
-
-
-def mail_verification(value):
-    if 'rambler.ru' in value:
-        raise ValidationError(
-            f"Регистрация с почты rambler.ru запрещена",
-            params={'value', value}
-        )
+from users.validators import age_verification, mail_verification
 
 
 class Location(models.Model):
