@@ -32,4 +32,3 @@ class AdUpdateDeletePermission(BasePermission):
             return True
 
         return False
-    
