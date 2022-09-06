@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date
 
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
@@ -10,11 +10,22 @@ from django.db import models
 MIN_AGE = 9
 
 
-def age_verification(born: date):
-    quantity_month = date.today().year * 12 + date.today().month - born.year * 12 + born.month
+def age_verification(value: date):
+    quantity_month = date.today().year * 12 + date.today().month - value.year * 12 + value.month
     quantity_years = quantity_month / 12
     if quantity_years < 9:
-        raise ValidationError("Access denied")
+        raise ValidationError(
+            "Access denied",
+            params={'value': value}
+        )
+
+
+def mail_verification(value):
+    if 'rambler.ru' in value:
+        raise ValidationError(
+            f"Регистрация с почты rambler.ru запрещена",
+            params={'value', value}
+        )
 
 
 class Location(models.Model):
@@ -49,6 +60,7 @@ class User(AbstractUser):
     location_id = models.ManyToManyField(Location, null=True)
 
     birth_date = models.DateField(validators=[age_verification], null=True)
+    email = models.EmailField(unique=True, validators=[mail_verification])
 
     class Meta:
         verbose_name = 'Пользователь'
