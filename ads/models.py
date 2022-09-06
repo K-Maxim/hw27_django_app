@@ -3,10 +3,12 @@ from django.db import models
 
 # Create your models here.
 from users.models import User
+from django.core.validators import MinLengthValidator
 
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
+    slug = models.CharField(max_length=10, unique=True, validators=[MinLengthValidator(5)], null=True)
 
     class Meta:
         verbose_name = 'Категория'
