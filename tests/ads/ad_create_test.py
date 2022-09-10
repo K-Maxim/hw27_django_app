@@ -29,5 +29,5 @@ def test_ad_create(client, user, category):
         content_type='application/json'
     )
 
-    # assert response.status_code == 201
+    assert response.status_code == 201
     assert response.data == expected_response
