@@ -6,12 +6,12 @@ from users.models import User
 
 
 class AdSerializer(serializers.ModelSerializer):
-    author_id = serializers.SlugRelatedField(
+    author = serializers.SlugRelatedField(
         required=False,
-        queryset=Ad.objects.all(),
+        queryset=User.objects.all(),
         slug_field='username'
     )
-    category_id = serializers.SlugRelatedField(
+    category = serializers.SlugRelatedField(
         required=False,
         queryset=Category.objects.all(),
         slug_field='name'
@@ -23,12 +23,7 @@ class AdSerializer(serializers.ModelSerializer):
 
 
 class AdCreateSerializer(serializers.ModelSerializer):
-    author_id = serializers.SlugRelatedField(
-        required=False,
-        queryset=Ad.objects.all(),
-        slug_field='username'
-    )
-    category_id = serializers.SlugRelatedField(
+    category = serializers.SlugRelatedField(
         required=False,
         queryset=Category.objects.all(),
         slug_field='name'
@@ -36,23 +31,15 @@ class AdCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ad
-        fields = '__all__'
+        fields = "__all__"
 
     def is_valid(self, raise_exception=False):
-        self._author_id = self.initial_data.pop('author_id')
-        self._category_id = self.initial_data.pop('category_id')
+        self._category_id = self.initial_data.pop('category')
         return super().is_valid(raise_exception=raise_exception)
 
     def create(self, validated_data):
-        ad = Ad.objects.create(
-            name=validated_data.get('name'),
-            price=validated_data.get('price'),
-            description=validated_data.get('description'),
-            is_published=validated_data.get('is_published')
-        )
-
-        ad.author_id = get_object_or_404(User, pk=self._author_id)
-        ad.category_id = get_object_or_404(Category, pk=self._category_id)
+        ad = Ad.objects.create(**validated_data)
+        ad.category = get_object_or_404(Category, pk=self._category_id)
 
         ad.save()
 
@@ -60,12 +47,12 @@ class AdCreateSerializer(serializers.ModelSerializer):
 
 
 class AdUpdateSerializer(serializers.ModelSerializer):
-    author_id = serializers.SlugRelatedField(
+    author = serializers.SlugRelatedField(
         required=False,
-        queryset=Ad.objects.all(),
+        queryset=User.objects.all(),
         slug_field='username'
     )
-    category_id = serializers.SlugRelatedField(
+    category = serializers.SlugRelatedField(
         required=False,
         queryset=Category.objects.all(),
         slug_field='name'
@@ -83,8 +70,8 @@ class AdUpdateSerializer(serializers.ModelSerializer):
     def save(self):
         ad = super().save()
 
-        ad.author_id = get_object_or_404(User, pk=self._author_id)
-        ad.category_id = get_object_or_404(Category, pk=self._category_id)
+        ad.author = get_object_or_404(User, pk=self._author_id)
+        ad.category = get_object_or_404(Category, pk=self._category_id)
 
         ad.save()
 
