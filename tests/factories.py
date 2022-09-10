@@ -25,7 +25,7 @@ class AdFactory(factory.django.DjangoModelFactory):
         model = Ad
 
     name = 'minimum of 10 characters'
-    author_id = factory.SubFactory(AuthorFactory)
+    author = factory.SubFactory(AuthorFactory)
     price = 500
-    category_id = factory.SubFactory(CategoryFactory)
+    category = factory.SubFactory(CategoryFactory)
     is_published = False
