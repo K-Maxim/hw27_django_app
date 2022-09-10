@@ -6,11 +6,11 @@ def test_ad_retrieve(client, ad, user_access):
     expected_response = {
         'id': ad.pk,
         'name': 'minimum of 10 characters',
-        'author_id': ad.author_id.username,
+        'author': ad.author.username,
         'price': 500,
         'description': None,
         'is_published': False,
-        'category_id': ad.category_id.name,
+        'category': ad.category.name,
         'image': None
     }
 
