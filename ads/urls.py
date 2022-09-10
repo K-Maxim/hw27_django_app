@@ -9,6 +9,7 @@ urlpatterns = [
     path('cat/<int:pk>/delete/', views.CarDeleteView.as_view()),
     path('ad/', views.AdView.as_view()),
     path('ad/<int:pk>', views.AdDetailView.as_view()),
+    path('ad/create/', views.AdCreateView.as_view()),
     path('ad/<int:pk>/update/', views.AdUpdateView.as_view()),
     path('ad/<int:pk>/delete/', views.AdDeleteView.as_view()),
     path('ad/<int:pk>/upload_image/', views.AdUploadImageView.as_view()),
